@@ -26,6 +26,13 @@ Dieses Projekt entstand im Rahmen meiner Weiterbildung zum Frontend-Entwickler b
 * **Vanilla JavaScript** (ES6+, Async/Await, Fetch API)
 * **PokéAPI** (RESTful API)
 
+## 🚀 Installation & Start
+Da das Projekt reines Vanilla JavaScript nutzt, sind keine Build-Tools oder Node.js erforderlich.
+
+Das Repository klonen oder als ZIP herunterladen.
+
+Die Datei index.html in einem modernen Webbrowser öffnen.
+
 ## 📁 Projektstruktur
 
 Um den Code sauber und wartbar zu halten, ist das Projekt nach Best Practices strukturiert:
@@ -44,12 +51,7 @@ Um den Code sauber und wartbar zu halten, ist das Projekt nach Best Practices st
 │    └── script.js       # HTML-Templates und UI-Hilfsfunktionen
 └── index.html           # Struktur der Hauptseite
 
-## 🚀 Installation & Start
-Da das Projekt reines Vanilla JavaScript nutzt, sind keine Build-Tools oder Node.js erforderlich.
 
-Das Repository klonen oder als ZIP herunterladen.
-
-Die Datei index.html in einem modernen Webbrowser öffnen.
 
 Den Pokédex erkunden!
 
