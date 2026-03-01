@@ -53,3 +53,13 @@ function resetApp() {
     document.getElementById('load-more-btn').style.display = 'inline-block';
     loadPokemon();
 }
+
+function openFilterOverlay() {
+    document.getElementById('filter-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden'; 
+}
+
+function closeFilterOverlay() {
+    document.getElementById('filter-overlay').classList.remove('active');
+    document.body.style.overflow = ''; 
+}

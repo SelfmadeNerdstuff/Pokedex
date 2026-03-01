@@ -40,3 +40,15 @@ function toggleLoading(isLoading) {
         btn.style.display = 'none';
     }
 }
+
+function checkScroll() {
+    let btn = document.getElementById('scroll-to-top');
+    if (window.scrollY > 300) btn.classList.remove('d-none');
+    else btn.classList.add('d-none');
+}
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', checkScroll);
