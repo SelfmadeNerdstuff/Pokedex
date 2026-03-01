@@ -44,7 +44,7 @@ Um den Code sauber und wartbar zu halten, ist das Projekt nach Best Practices st
 │    └── script.js       # HTML-Templates und UI-Hilfsfunktionen
 └── index.html           # Struktur der Hauptseite
 
-🚀 Installation & Start
+## 🚀 Installation & Start
 Da das Projekt reines Vanilla JavaScript nutzt, sind keine Build-Tools oder Node.js erforderlich.
 
 Das Repository klonen oder als ZIP herunterladen.
