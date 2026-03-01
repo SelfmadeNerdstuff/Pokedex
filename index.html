@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <link rel="icon" href="./img/favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/overlay.css">
+</head>
+
+<body>
+    <header>
+
+        <div class="header-container container">
+            <a href="index.html" class="home-link">
+                <div class="logo-area">
+                    <img src="./img/logo.png" alt="Pokedex Logo" id="main-logo">
+                    <h1>Pokedex</h1>
+                </div>
+            </a>
+
+            <div class="search-area">
+                <input type="text" id="search-input" placeholder="Search Pokemon...">
+                <button id="search-btn">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <nav id="type-filters">
+            <img src="./img/normal.png" alt="Normal" class="filter-icon" data-type="normal">
+            <img src="./img/feuer.png" alt="Fire" class="filter-icon" data-type="fire">
+            <img src="./img/wasser.png" alt="Water" class="filter-icon" data-type="water">
+            <img src="./img/pflanze.png" alt="Grass" class="filter-icon" data-type="grass">
+            <img src="./img/blitz.png" alt="Electric" class="filter-icon" data-type="electric">
+            <img src="./img/eis.png" alt="Ice" class="filter-icon" data-type="ice">
+            <img src="./img/kampf.png" alt="Fighting" class="filter-icon" data-type="fighting">
+            <img src="./img/gift.png" alt="Poison" class="filter-icon" data-type="poison">
+            <img src="./img/boden.png" alt="Ground" class="filter-icon" data-type="ground">
+            <img src="./img/flug.png" alt="Flying" class="filter-icon" data-type="flying">
+            <img src="./img/psy.png" alt="Psychic" class="filter-icon" data-type="psychic">
+            <img src="./img/insekt.png" alt="Bug" class="filter-icon" data-type="bug">
+            <img src="./img/gestein.png" alt="Rock" class="filter-icon" data-type="rock">
+            <img src="./img/geist.png" alt="Ghost" class="filter-icon" data-type="ghost">
+            <img src="./img/drache.png" alt="Dragon" class="filter-icon" data-type="dragon">
+            <img src="./img/stahl.png" alt="Steel" class="filter-icon" data-type="steel">
+            <img src="./img/fee.png" alt="Fairy" class="filter-icon" data-type="fairy">
+        </nav>
+        
+        <section id="pokemon-grid"></section>
+
+        <div class="load-more-container">
+            <button id="load-more-btn">Load more</button>
+            <img src="./img/loading.gif" id="loading-spinner" class="d-none" alt="Loading Pokemon...">
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Pokedex Project</p>
+        </div>
+    </footer>
+
+    <div id="pokemon-overlay" class="d-none" onclick="closeOverlay()">
+        <button class="nav-arrow" onclick="navigatePokemon(-1, event)">&#10094;</button>
+        <div class="overlay-content" id="overlay-card" onclick="event.stopPropagation()">
+            
+            <div class="overlay-header">
+                <div class="overlay-header-top">
+                    <h2 id="overlay-name">Name</h2>
+                    <span id="overlay-id">#000</span>
+                </div>
+                <div class="overlay-types" id="overlay-types"></div>
+                <img src="" id="overlay-image" alt="Pokemon">
+            </div>
+
+            <div class="overlay-body">
+                <div class="about-section">
+                    <h4>About</h4>
+                    <div class="about-info" id="overlay-about"></div>
+                </div>
+
+                <div class="overlay-grid" id="overlay-grid">
+                    <div class="grid-tile" onclick="openTab('stats')">Stats</div>
+                    <div class="grid-tile" onclick="openTab('moves')">Strongest Moves</div>
+                    <div class="grid-tile" onclick="openTab('abilities')">Abilities</div>
+                    <div class="grid-tile" onclick="openTab('shiny')">Shiny</div>
+                </div>
+
+                <div class="overlay-details d-none" id="overlay-details">
+                    <div class="details-header">
+                        <img src="./img/left-arrow.png" alt="Back" class="back-btn" onclick="closeTab()">
+                        <h3 id="details-title">Title</h3>
+                    </div>
+                    <div id="details-content"></div>
+                </div>
+            </div>
+        </div>
+        <button class="nav-arrow" onclick="navigatePokemon(1, event)">&#10095;</button>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/filter.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/overlay.js"></script>
+    
+</body>
+</html>
