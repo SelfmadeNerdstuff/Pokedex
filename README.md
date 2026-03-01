@@ -55,4 +55,4 @@ Um den Code sauber und wartbar zu halten, ist das Projekt nach Best Practices st
 
 Den Pokédex erkunden!
 
-Coded with 💡 by Ruslan – Meilenstein-Projekt bei der Developer Akademie.
+Ruslan – Meilenstein-Projekt bei der Developer Akademie.
