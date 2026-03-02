@@ -2,13 +2,16 @@ let currentOverlayId = null;
 
 async function openOverlay(id) {
     currentOverlayId = id;
-    document.getElementById('pokemon-overlay').classList.remove('d-none');
-    document.body.style.overflow = 'hidden';
-    closeTab();
-
+    
     let data = await getPokemon(id);
     fillOverlayHeader(data);
     fillOverlayAbout(data);
+    closeTab();
+
+    document.getElementById('pokemon-overlay').classList.remove('d-none');
+    document.body.style.overflow = 'hidden';
+    
+    updateNavArrows();
 }
 
 function closeOverlay() {
@@ -18,15 +21,47 @@ function closeOverlay() {
 
 async function navigatePokemon(direction, event) {
     event.stopPropagation();
-    let newId = currentOverlayId + direction;
-    if (newId < 1 || newId > 151) return;
-    await openOverlay(newId);
+    let cards = Array.from(document.querySelectorAll('.pokemon-card:not(.d-none)'));
+    let index = cards.findIndex(c => c.id === `card-${currentOverlayId}`);
+    let newIndex = index + direction;
+    
+    let searchInput = document.getElementById('search-input');
+    let isNormalView = (typeof activeFilters !== 'undefined' && activeFilters.length === 0) && (searchInput && searchInput.value.trim() === '');
+    
+    if (newIndex >= cards.length && isNormalView) {
+        if (typeof currentOffset !== 'undefined' && currentOffset < 151) {
+            await loadPokemon();
+            cards = Array.from(document.querySelectorAll('.pokemon-card:not(.d-none)'));
+        }
+    }
+    
+    if (newIndex >= 0 && newIndex < cards.length) {
+        let newId = parseInt(cards[newIndex].id.replace('card-', ''));
+        await openOverlay(newId);
+    }
+}
+
+function updateNavArrows() {
+    let cards = Array.from(document.querySelectorAll('.pokemon-card:not(.d-none)'));
+    let index = cards.findIndex(c => c.id === `card-${currentOverlayId}`);
+    let leftArrow = document.getElementById('nav-left');
+    let rightArrow = document.getElementById('nav-right');
+    
+    if (!leftArrow || !rightArrow) return;
+    
+    leftArrow.classList.toggle('d-none', index <= 0);
+    
+    let searchInput = document.getElementById('search-input');
+    let isNormalView = (typeof activeFilters !== 'undefined' && activeFilters.length === 0) && (searchInput && searchInput.value.trim() === '');
+    let canLoadMore = isNormalView && (typeof currentOffset !== 'undefined' && currentOffset < 151);
+    
+    rightArrow.classList.toggle('d-none', index >= cards.length - 1 && !canLoadMore);
 }
 
 function fillOverlayHeader(data) {
     let mainType = data.types[0].type.name;
     let card = document.getElementById('overlay-card');
-    card.style.borderColor = `var(--bg-${mainType})`;
+    card.className = `overlay-content type-${mainType}`; 
     
     document.getElementById('overlay-name').innerText = data.name.charAt(0).toUpperCase() + data.name.slice(1);
     document.getElementById('overlay-id').innerText = '#' + data.id.toString().padStart(3, '0');
@@ -68,18 +103,11 @@ function renderStats(container) {
     let html = '';
     globalCache[currentOverlayId].stats.forEach(s => {
         let pct = Math.min((s.base_stat / 150) * 100, 100); 
-        let color = pct > 50 ? '#78C850' : '#F08030'; 
+        let colorClass = pct > 50 ? 'bg-stat-high' : 'bg-stat-low'; 
         let name = s.stat.name.replace('special-attack', 'sp.atk').replace('special-defense', 'sp.def');
-        html += getStatHTML(name, s.base_stat, pct, color);
+        html += getStatHTML(name, s.base_stat, pct, colorClass);
     });
     container.innerHTML = html;
-}
-
-function getStatHTML(name, val, pct, color) {
-    return `<div class="stat-row">
-        <div class="stat-name">${name}</div><div class="stat-value">${val}</div>
-        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%;background:${color};"></div></div>
-    </div>`;
 }
 
 function renderMoves(container) {
@@ -89,20 +117,26 @@ function renderMoves(container) {
     
     let html = '';
     lvlMoves.slice(0, 5).forEach(m => {
-        html += `<div class="move-item"><span>${m.move.name.replace('-', ' ')}</span><span class="move-level">Lv. ${m.version_group_details[0].level_learned_at}</span></div>`;
+        let name = m.move.name.replace('-', ' ');
+        let lvl = m.version_group_details[0].level_learned_at;
+        html += getMoveHTML(name, lvl);
     });
-    container.innerHTML = html || '<p>No moves found.</p>';
+    container.innerHTML = html || '<p class="empty-msg">No moves found.</p>';
 }
 
 async function renderAbilities(container) {
-    container.innerHTML = '<p style="text-align:center;color:#aaa;">Loading...</p>';
     let abilities = globalCache[currentOverlayId].abilities;
+    let needsLoading = abilities.some(a => !globalCache[a.ability.url]);
+    
+    if (needsLoading) {
+        container.innerHTML = '<p class="loading-text">Loading...</p>';
+    }
+    
     let html = '';
     for (let i = 0; i < abilities.length; i++) {
         let desc = await fetchAbilityDesc(abilities[i].ability.url);
-        let hidden = abilities[i].is_hidden ? '<span style="font-size:12px;color:#aaa;">(Hidden)</span>' : '';
         let name = abilities[i].ability.name.replace('-', ' ');
-        html += `<div class="ability-item"><span>${name} ${hidden}</span><span class="ability-desc">${desc}</span></div>`;
+        html += getAbilityHTML(name, abilities[i].is_hidden, desc);
     }
     container.innerHTML = html;
 }
@@ -115,5 +149,5 @@ async function fetchAbilityDesc(url) {
 
 function renderShiny(container) {
     let img = globalCache[currentOverlayId].sprites.front_shiny;
-    container.innerHTML = img ? `<div class="shiny-container"><img src="${img}" alt="Shiny Form"></div>` : '<p>No image.</p>';
+    container.innerHTML = img ? `<div class="shiny-container"><img src="${img}" alt="Shiny Form"></div>` : '<p class="empty-msg">No image.</p>';
 }

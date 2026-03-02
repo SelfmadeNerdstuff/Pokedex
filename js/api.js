@@ -3,27 +3,48 @@ let currentOffset = 0;
 let globalCache = {};
 
 async function loadPokemon() {
-    toggleLoading(true);
     let limit = (currentOffset + 20 > MAX_POKEMON) ? MAX_POKEMON - currentOffset : 20;
-    let url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${currentOffset}`;
-    await fetchAndRenderList(url);
     currentOffset += limit;
+    
+    let visibleIds = [];
+    for (let i = 1; i <= currentOffset; i++) visibleIds.push(i);
+    
+    await updateGridView(visibleIds);
+    
+    let btn = document.getElementById('load-more-btn');
+    btn.style.display = (currentOffset >= MAX_POKEMON) ? 'none' : 'inline-block';
+}
+
+async function updateGridView(visibleIds) {
+    let missingIds = visibleIds.filter(id => !document.getElementById(`card-${id}`));
+    await fetchAndAppendMissing(missingIds);
+    toggleCardVisibility(visibleIds);
+}
+
+async function fetchAndAppendMissing(missingIds) {
+    if (missingIds.length === 0) return;
+    toggleLoading(true);
+    let grid = document.getElementById('pokemon-grid');
+    for (let i = 0; i < missingIds.length; i++) {
+        let html = await createCardHTML(missingIds[i]);
+        grid.insertAdjacentHTML('beforeend', html);
+    }
     toggleLoading(false);
 }
 
-async function fetchAndRenderList(url) {
-    let data = await fetchData(url);
-    for (let i = 0; i < data.results.length; i++) {
-        await loadAndRenderSinglePokemon(data.results[i].url);
-    }
-}
-
-async function loadAndRenderSinglePokemon(url) {
-    let p = await getPokemon(url);
+async function createCardHTML(id) {
+    let p = await getPokemon(id);
     let name = p.name.charAt(0).toUpperCase() + p.name.slice(1);
     let types = p.types.map(t => t.type.name);
-    let html = generatePokemonCardHTML(p.id, name, p.sprites.front_default, types);
-    document.getElementById('pokemon-grid').innerHTML += html;
+    return generatePokemonCardHTML(p.id, name, p.sprites.front_default, types);
+}
+
+function toggleCardVisibility(visibleIds) {
+    let cards = document.querySelectorAll('.pokemon-card');
+    for (let i = 0; i < cards.length; i++) {
+        let cardId = parseInt(cards[i].id.replace('card-', ''));
+        cards[i].classList.toggle('d-none', !visibleIds.includes(cardId));
+    }
 }
 
 async function fetchData(url) {
@@ -35,9 +56,11 @@ async function fetchData(url) {
 }
 
 async function getPokemon(idOrUrl) {
+    if (globalCache[idOrUrl]) return globalCache[idOrUrl];
     let url = idOrUrl.toString().startsWith('http') ? idOrUrl : `https://pokeapi.co/api/v2/pokemon/${idOrUrl}`;
     let data = await fetchData(url);
     globalCache[data.id] = data;
+    globalCache[url] = data;
     return data;
 }
 

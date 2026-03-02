@@ -69,13 +69,16 @@
     </footer>
 
     <div id="pokemon-overlay" class="d-none" onclick="closeOverlay()">
-        <button class="nav-arrow" onclick="navigatePokemon(-1, event)">&#10094;</button>
+        <button id="nav-left" class="nav-arrow" onclick="navigatePokemon(-1, event)">&#10094;</button>
         <div class="overlay-content" id="overlay-card" onclick="event.stopPropagation()">
             
             <div class="overlay-header">
                 <div class="overlay-header-top">
                     <h2 id="overlay-name">Name</h2>
-                    <span id="overlay-id">#000</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                        <span id="overlay-id">#000</span>
+                        <button class="close-overlay-btn" onclick="closeOverlay()">✕</button>
+                    </div>
                 </div>
                 <div class="overlay-types" id="overlay-types"></div>
                 <img src="" id="overlay-image" alt="Pokemon">
@@ -103,13 +106,15 @@
                 </div>
             </div>
         </div>
-        <button class="nav-arrow" onclick="navigatePokemon(1, event)">&#10095;</button>
+        <button id="nav-right" class="nav-arrow" onclick="navigatePokemon(1, event)">&#10095;</button>
     </div>
 
     <button id="scroll-to-top" class="d-none" onclick="scrollToTop()">
         <img src="./img/up-arrow.png" alt="Scroll to top">
     </button>
 
+    <script src="js/data.js"></script>
+    <script src="js/templates.js"></script>
     <script src="js/script.js"></script>
     <script src="js/api.js"></script>
     <script src="js/filter.js"></script>
